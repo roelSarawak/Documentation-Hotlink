@@ -1,0 +1,74 @@
+{
+    "name": "documentation-hotlink",
+    "displayName": "Documentation Hotlink",
+    "description": "Open the Markdown preview for the docs file matching the current file's basename.",
+    "version": "0.0.1",
+    "publisher": "x3mp",
+    "engines": {
+        "vscode": "^1.103.0"
+    },
+    "categories": [
+        "Other"
+    ],
+    "activationEvents": [
+        "onCommand:docsPreview.openForCurrentFile"
+    ],
+    "main": "./dist/extension.js",
+    "contributes": {
+        "commands": [
+            {
+                "command": "docsPreview.openForCurrentFile",
+                "title": "Open Documentation Preview",
+                "icon": "$(book)"
+            }
+        ],
+        "menus": {
+            "editor/title": [
+                {
+                    "command": "docsPreview.openForCurrentFile",
+                    "group": "navigation@10",
+                    "when": "!inDiffEditor"
+                }
+            ],
+            "commandPalette": [
+                {
+                    "command": "docsPreview.openForCurrentFile",
+                    "when": "true"
+                }
+            ]
+        },
+        "configuration": {
+            "title": "Documentation Hotlink",
+            "properties": {
+                "docsPreview.docsFolder": {
+                    "type": "string",
+                    "default": "docs",
+                    "description": "Path to the folder that contains generated docs. Can be relative to the workspace, absolute, or include ${workspaceFolder}."
+                },
+                "docsPreview.docsExtension": {
+                    "type": "string",
+                    "default": ".md",
+                    "description": "File extension of generated docs (e.g. .md)."
+                },
+                "docsPreview.openToSide": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Open the Markdown preview to the side. If false, opens in the current column."
+                }
+            }
+        }
+    },
+    "scripts": {
+        "vscode:prepublish": "npm run compile",
+        "compile": "tsc -p ./",
+        "watch": "tsc -w -p ./",
+        "package": "vsce package"
+    },
+    "devDependencies": {
+        "@types/node": "^18.19.122",
+        "@types/vscode": "^1.60.0",
+        "typescript": "^4.0.0",
+        "vsce": "^2.15.0",
+        "vscode": "^1.1.37"
+    }
+}

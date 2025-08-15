@@ -1,0 +1,13 @@
+# Qodo
+.qodo/
+
+# Basic ignores
+node_modules/
+out/
+*.vsix
+*.log
+.vscode/
+!.vscode/extensions.json
+!.vscode/launch.json
+!.vscode/settings.json
+versions/
