@@ -1,10 +1,16 @@
+**/.git
+**/.gitignore
+**/.vscode
+node_modules/**
 .vscode/**
 .vscode-test/**
-src/**
-.gitignore
-.yarnrc
-**/tsconfig.json
-**/eslint.config.mjs
 **/*.map
 **/*.ts
-**/.vscode-test.*
+
+# Exclude tests from the package
+src/**/test/**
+src/**/tests/**
+dist/**/test/**
+dist/**/tests/**
+**/*.spec.*
+**/*.test.*

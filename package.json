@@ -1,8 +1,8 @@
 {
     "name": "documentation-hotlink",
     "displayName": "Documentation Hotlink",
-    "description": "Open the Markdown preview for the docs file matching the current file's basename.",
-    "version": "0.0.1",
+    "description": "A lightweight extension that allows you to open the documentation of your file with the click of a button.",
+    "version": "0.0.2",
     "publisher": "x3mp",
     "engines": {
         "vscode": "^1.103.0"
