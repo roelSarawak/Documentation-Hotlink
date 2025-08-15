@@ -7,13 +7,17 @@
     "engines": {
         "vscode": "^1.103.0"
     },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/roelSarawak/Documentation-Hotlink"
+    },
     "categories": [
         "Other"
     ],
     "activationEvents": [
-        "onCommand:docsPreview.openForCurrentFile"
+        "onStartupFinished"
     ],
-    "main": "./dist/extension.js",
+    "main": "./out/extension.js",
     "contributes": {
         "commands": [
             {
