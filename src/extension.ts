@@ -28,6 +28,41 @@ async function openMarkdownPreview(uri: vscode.Uri, toSide: boolean) {
     await vscode.commands.executeCommand(cmd, uri);
 }
 
+async function findFileRecursively(
+    dirUri: vscode.Uri,
+    fileName: string
+): Promise<vscode.Uri | null> {
+    try {
+        // Check if the target file exists in the current directory
+        const targetUri = vscode.Uri.joinPath(dirUri, fileName);
+        try {
+            await vscode.workspace.fs.stat(targetUri);
+            return targetUri;
+        } catch {
+            // File not found in current directory, continue searching
+        }
+
+        // Read directory contents
+        const entries = await vscode.workspace.fs.readDirectory(dirUri);
+
+        // Search in subdirectories
+        for (const [name, type] of entries) {
+            if (type === vscode.FileType.Directory) {
+                const subDirUri = vscode.Uri.joinPath(dirUri, name);
+                const found = await findFileRecursively(subDirUri, fileName);
+                if (found) {
+                    return found;
+                }
+            }
+        }
+
+        return null;
+    } catch (error) {
+        // Directory doesn't exist or can't be read
+        return null;
+    }
+}
+
 async function resolveDocsUriForFile(
     fileUri: vscode.Uri
 ): Promise<vscode.Uri | null> {
@@ -40,14 +75,19 @@ async function resolveDocsUriForFile(
 
     const normalizedExt = ext.startsWith(".") ? ext : `.${ext}`;
     const docsRoot = expandDocsFolder(folder, wsFolder.uri);
-    const docsPath = path.join(docsRoot, `${baseName}${normalizedExt}`);
-    const docsUri = vscode.Uri.file(docsPath);
+    const docsRootUri = vscode.Uri.file(docsRoot);
+    const targetFileName = `${baseName}${normalizedExt}`;
+
+    // First, try the original logic (direct path in docs root)
+    const directPath = path.join(docsRoot, targetFileName);
+    const directUri = vscode.Uri.file(directPath);
 
     try {
-        await vscode.workspace.fs.stat(docsUri);
-        return docsUri;
+        await vscode.workspace.fs.stat(directUri);
+        return directUri;
     } catch {
-        return null; // not found
+        // Not found in root, search recursively in subdirectories
+        return await findFileRecursively(docsRootUri, targetFileName);
     }
 }
 
@@ -66,7 +106,7 @@ export function activate(context: vscode.ExtensionContext) {
                 const { folder, ext } = getConfig();
                 const base = path.parse(editor.document.uri.fsPath).name;
                 vscode.window.showWarningMessage(
-                    `No docs found for \"${base}\" in \"${folder}\" with extension \"${ext}\".`
+                    `No docs found for \"${base}\" in \"${folder}\" (including subfolders) with extension \"${ext}\".`
                 );
                 return;
             }
